@@ -14,8 +14,10 @@
 
 /* Create an empty queue */
 struct list_head *q_new()
+/*創建並返回一個指向struct list_head類型的指針*/
 {
     struct list_head *new_head = malloc(sizeof(struct list_head));
+    /*分配足夠的記憶體來儲存一個struct list_head結構體的大小，並將返回的指針賦給new_qhead*/
     if (!new_head)
         return NULL;
     INIT_LIST_HEAD(new_head);
@@ -28,6 +30,8 @@ void q_free(struct list_head *head) {
     if (!head)
         return;
     element_t *entry, *safe;
+    /*entry：用來指向當前正在遍歷的queue node*/
+    /*safe：用來存儲下個節點的指針，這樣在刪除當前節點時不會丟失list的連接*/
     list_for_each_entry_safe (entry, safe, head, list) {
         free(entry->value);
         free(entry);
