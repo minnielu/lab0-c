@@ -31,7 +31,7 @@ void q_free(struct list_head *head) {
         return;
     element_t *entry, *safe;
     /*entry：用來指向當前正在遍歷的queue node*/
-    /*safe：用來存儲下個節點的指針，這樣在刪除當前節點時不會丟失list的連接*/
+    /*safe：用來存下個節點的指針，這樣在刪除當前節點時不會丟失list的連接*/
     list_for_each_entry_safe (entry, safe, head, list) {
         free(entry->value);
         free(entry);
@@ -43,18 +43,19 @@ void q_free(struct list_head *head) {
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
+    /*head：指向鏈表頭的指針（struct list_head），s：要插入元素的字符串。*/
     if (!head)
         return false;
-    element_t *new_ele = malloc(sizeof(element_t));
+    element_t *new_ele = malloc(sizeof(element_t));/*分配一塊內存來存放新的element_t，並將該內存的地址給 new_ele*/
     if (!new_ele)
         return false;
-    INIT_LIST_HEAD(&new_ele->list);
+    INIT_LIST_HEAD(&new_ele->list);/*初始化 new_ele 的 list*/
     new_ele->value = strdup(s);
     if (!new_ele->value) {
         free(new_ele);
         return false;
     }
-    list_add(&new_ele->list, head);
+    list_add(&new_ele->list, head);/*list_add用來將new_ele->list插入到linked list的頭部*/
     return true;
 }
 
@@ -73,23 +74,25 @@ bool q_insert_tail(struct list_head *head, char *s)
         free(new_ele);
         return false;
     }
-    list_add_tail(&new_ele->list, head);
+    list_add_tail(&new_ele->list, head);/*list_add用來將new_ele->list插入到linked list的tail*/
     return true;
 }
 
 /* Remove an element from head of queue */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
+/*char *sp: 用來接收刪除元素的值、size_t bufsize: 表示緩衝區的大小，用來限制複製的最大字元數*/
 {
-    if (!head || list_empty(head))
+    if (!head || list_empty(head))/*檢查傳入的 head 是否為空*/
         return NULL;
 
-    element_t *f = list_first_entry(head, element_t, list);
-    list_del(&f->list);
+    element_t *f = list_first_entry(head, element_t, list);/*list_first_entry 用來獲取queue中的第一個元素*/
+    list_del(&f->list);/*list_del將元素從queue中移除，但不會釋放它的記憶體*/
 
     if (sp) {
         size_t copy_size =
             strlen(f->value) < (bufsize - 1) ? strlen(f->value) : (bufsize - 1);
-        strncpy(sp, f->value, copy_size);
+        /*strlen(f->value) 計算元素值的長度，並將其與 bufsize-1 作比較，確保不會超過緩衝區的大小*/
+        strncpy(sp, f->value, copy_size);/*strncpy將f->value複製到sp中，最多複製copy_size字元*/
         sp[copy_size] = '\0';
     }
     return f;
