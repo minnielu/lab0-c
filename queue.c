@@ -104,13 +104,14 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
     if (!head || list_empty(head))
         return NULL;
 
-    element_t *f = list_last_entry(head, element_t, list);
-    list_del(&f->list);
+    element_t *f = list_last_entry(head, element_t, list);/*list_first_entry 用來獲取queue中的最後一個元素*/
+    list_del(&f->list);/*list_del將元素從queue中移除，但不會釋放它的記憶體*/
 
     if (sp) {
         size_t copy_size =
             strlen(f->value) < (bufsize - 1) ? strlen(f->value) : (bufsize - 1);
-        strncpy(sp, f->value, copy_size);
+        /*strlen(f->value) 計算元素值的長度，並將其與 bufsize-1 作比較，確保不會超過緩衝區的大小*/
+        strncpy(sp, f->value, copy_size);/*strncpy將f->value複製到sp中，最多複製copy_size字元*/
         sp[copy_size] = '\0';
     }
     return f;
